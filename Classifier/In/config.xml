@@ -11,11 +11,11 @@
         </common>
         
         <evaluation description="Evaluation includes the main functions and methods parameters">
-            <waveletDenoising processingEnable="1" deviceType="1" minPeakHeight="0.05" minPeakDistance="0.6" wname="sym7" level="" >
-                <periodicityCalculation processingEnable="1" description="Enables finding periodicities" />   
+            <waveletDenoising deviceType="1" minPeakHeight="0.05" minPeakDistance="0.6" wname="sym7" level="" detailedPlotsEnable="1" decimationEnable="1">
+                <periodicityCalculation processingEnable="1" plotEnable="0" description="Enables finding periodicities" />   
             </waveletDenoising>
-            <spectrumFiltration MinPeakHeight = "0.00005" TimePeakDistance = "0.7" plotEnable = "1" DetailedPlotEnable = "1" printPlotEnable = "1"/>
-
+            <spectrumFiltration MinPeakHeight = "0.00005" TimePeakDistance = "0.7" plotEnable = "0" DetailedPlotEnable = "0" printPlotEnable = "0"/>
+        
             
         </evaluation>
     </parameters>
