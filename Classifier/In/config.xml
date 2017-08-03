@@ -1,195 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<config version="2.0"  discription="Config file evaluates computeFramework methods configuration">
+<config version="1.0"  discription="Config file evaluates medFramework methods configuration">
     <parameters>
         <common discription="Common includes the main parameters of computeFramework such as turning on/off some methods and features">
-            <device channelNumber="1" channelDirection="rad" lowFrequency="4" highFrequency="20000" sensitivity="16" sensitivityCorrection="1" description="Equipment contains base device parameters: nominal sensitivity [mV/g] sensitivity and correction coefficient for each device."/>
             
-            <defaultParametersEnable value="0" description="Unused"/>
-            <consoleEnable value="0" description="Unused. Disable writing to log-file"/>
-            <debugModeEnable value="0" logFileEnable="true" description="Enable developer features"/>
-
-            <printPlotsEnable value="1" visible="off" description="Enable saving jpg-images of found defects"/>
-            <frequencyCorrectionEnable value="0" weight="1" description="Enable frequency correction based on fuzzy logic"/>
-            <parpoolEnable value="0" weight="1" description="Enable parallel calculations"/>
+            <printPlotsEnable value="1" description="Enable saving jpg-images of found defects"/>
+            <parpoolEnable value="0" description="Enable parallel calculations"/>
+            <windowKurtosis value="1" description="Enable window kurtosis calculation" />
+            <waveletDenoiseEnable value="1" description="Enable wavelet signal denoising using swt" />
             
-            <commonFunctions initializationWeight="1" fillFileStructWeight="1" hardwareProfileParserWeight="1" description="Contain the weght of functions which always run"/>
-            <metricsEnable value="0" weight="1" description="Enable metrics results print to status file"/>
-            <spmDBmDBcEnable value="0" weight="1" description="Enable first shock-pulse method(SPM) calculations with dBc/dBm level"/>
-            <spmLRHREnable value="0" weight="1" description="Enable second shock-pulse method(SPM) calculations with HR/LR level"/>
-            <iso15242Enable value="0" weight="1" description="Enable calculations of mean vibration level in 3 ranges (L,M,H)"/>
-            <iso10816Enable value="0" weight="1" description="Enable evaluation of rms vibration velocity according to ISO10816 standard"/>
-
-            <octaveSpectrumEnable value="0" weight="1" description="Enable caclulations of 1{1/3,1/6}-octave spectrum for easy machine state control"/>
-            <spectralClassifierEnable value="0" weight="1" description="Enable defect detection based on envelope spectrum analysis"/>
-            <sparseDecompositionEnable value="1" weight="1" scalogramWeight="1" description="Currenty Unused. Enable sparse wavelet decomposition for time-domain defect detection"/>
-			<sparseClassifierEnable value="0" weight="1" description="Implement defect classification in the time-frequency domain"/>
-            <noiseDetectionEnable value="0" weight="1" description="Enable SVM classification which trains classifier and on the basis of the training sample classifies files"/>
-
-            <historyEnable value="0" weight="1" description="Enable trend analysis of history files"/>
-            <mergeFilesEnable value="0" weight="1" description="Enable status files merging"/>
-            <printAxonometryEnable value="0" weight="1" description="Enable print axonometry of history"/>
         </common>
         
         <evaluation description="Evaluation includes the main functions and methods parameters">
+            <waveletDenoising processingEnable="1" deviceType="1" minPeakHeight="0.05" minPeakDistance="0.6" wname="sym7" level="" >
+                <periodicityCalculation processingEnable="1" description="Enables finding periodicities" />   
+            </waveletDenoising>
+            <spectrumFiltration MinPeakHeight = "0.00005" TimePeakDistance = "0.7" plotEnable = "1" DetailedPlotEnable = "1" printPlotEnable = "1"/>
 
-			<loger tcpipsocketEnable="0" logEnable="1" consoleEnable="1" localhost="localhost" localport="8888" outputBufferSize="4096" description=""/>
-			
-            <decimation processingEnable="0" plotEnable="1" decimationFactor="8"/>
-            <adaptiveNoiseFiltering processingEnable="0" plotEnable="0" filteringType="rough" description=" filteringType = ACCURATE - noise cut-off curve is accurate match of the spectrum envelope curve; ROUGH - noise cut-off curve is close to the straight line"/>
-            <spectra>
-                <envSpectrum plotEnable="1" filterType="BPF" lowFreq="500" highFreq="10000" Rp="1" Rs="10" averagingEnable="0" secPerFrame="10" interpolationEnable="1"/>
-                <logSpectrum plotEnable="0" frameLength="5" rmsFactor="2" cutoffLevel="0" minPeaksDistance="0.2"/>
-                <octaveSpectrum plotEnable="0" lowFrequency="16" highFrequency="16000" filterMode="1/3 octave" roundingEnable="1" warningLevel="" damageLevel="" description=""/>
-                <dividedFindpeaks plotEnable="0" lowFrequency="5" framesNumber="10" frameOverlapValue="5" minPeakProminenceAccelerationCoef="2" minPeakProminenceVelocityCoef="2" minPeakProminenceDisplacementCoef="2" minPeaksDistance="0.2"/>
-            </spectra>
             
-            <metrics firstSampleNumber="10" secPerFrame="0.1" secOverlapValue="0.01" description="Returns the main parameters of acceleration, velocity and displacement">
-                <acceleration description="Calculate rms value of acceleration in the specific frequency range">
-                    <rms enable="1" frequencyRange="4:Fs" thresholds=""/>
-                    <peak enable="1" thresholds="3:5:6"/>
-                    <peak2peak enable="1" thresholds=""/>
-                    <peakFactor enable="1" thresholds="3:5:6"/>
-                    <crestFactor enable="1" thresholds="3:5:6"/>
-                    <kurtosis enable="1" thresholds=""/>
-                    <excess enable="1" thresholds=""/>
-                    <noise enable="1" thresholds=""/>
-                    <envelopeNoise enable="1" thresholds=""/>
-                </acceleration>
-                <velocity description="Calculate rms value of velocity in the specific frequency range">
-                    <rms enable="1" frequencyRange="10:1000" thresholds=""/>
-                    <peak enable="1" thresholds=""/>
-                    <peak2peak enable="1" thresholds=""/>
-                    <peakFactor enable="1" thresholds=""/>
-                    <crestFactor enable="1" thresholds=""/>
-                    <kurtosis enable="1" thresholds=""/>
-                    <excess enable="1" thresholds=""/>
-                    <noise enable="1" thresholds=""/>
-                </velocity>
-                <displacement description="Calculate rms value of displacement in the specific frequency range">
-                    <rms enable="1" frequencyRange="1:200" thresholds=""/>
-                    <peak enable="1" thresholds=""/>
-                    <peak2peak enable="1" thresholds=""/>
-                    <peakFactor enable="1" thresholds=""/>
-                    <crestFactor enable="1" thresholds=""/>
-                    <kurtosis enable="1" thresholds=""/>
-                    <excess enable="1" thresholds=""/>
-                    <noise enable="1" thresholds=""/>
-                </displacement>
-            </metrics>
-            
-            <noiseDetection description="Making decision about device state (on/off) based on peak factor and envelope spectrum" highThresholdFrequency="1000" lowThresholdFrequency="5" requiredMaxProminence="4.5" requiredPeakFactorDirect="20" requiredPeakFactorEnvelope="20" requiredPeaksNumber="100" requiredPeaksProminenceRms="4">
-                <svm accuracy="0" averageRecall="0" enable="0" signalCounter="5">
-                    <classification autoweight="1" ratemodel="1"/>
-                    <observations combining="all combinations" list="vbrObsDirAndEnvPeakAndRms , vbrObsCrestFactor , vbrObsRms"/>
-                </svm>
-            </noiseDetection>
-			
-			<frequencyDomainClassifier>
-				<peakComparison modeFunction="1" coefficientModeFunction="0.09" percentRange="0" freqRange="0" description="for function modeFunction=1"/>
-				<schemeValidator fuzzyResultEnable="1" validLogLevel="1.5" description="log level into validator = validLogLevel + cutoffLevel(function logSpectrum)">
-					<dispSpecValidator showRules="0" showSurface="0"/> 
-					<velSpecValidator showRules="0" showSurface="0"/>
-					<accSpecValidator showRules="0" showSurface="0"/>
-					<accEnvSpecValidator showRules="0" showSurface="0"/>
-				</schemeValidator>
-			</frequencyDomainClassifier>
-		   
-			<frequencyCorrector frequencyEstimationType="displacementInterferenceEstimator" plotEnable="0" interpolationFactor="8" minDistanceInterferenceRules="0.2" nPeaks="10" minPeakHeight="2.5"  minPeakDistance="3" SortStr="descend" maxPeaksInResult="4" minOverMaximumThreshold="0.66" goodThreshold="160" averageThreshold="35" conflictCloseness="0.2">
-				<displacementInterferenceEstimator plotEnable="0" validFrames = "1" fullSavingEnable="0">
-					<rough processingEnable="1" plotEnable="0" percentRange="10" percentStep="0.1" dfPercentAccuracy="0.01" nPeaks="5"  minPeakDistance="3" mainFramesNumber="2" additionalFramesNumber="4" SortStr="descend" maxPeaksInResult="4" minOverMaximumThreshold="0.66" baseVal="0"/>
-					<accurate processingEnable="0" plotEnable="0" percentRange="1.0" percentStep="0.01" dfPercentAccuracy="0.01" nPeaks="5"  minPeakDistance="3" mainFramesNumber="2" additionalFramesNumber="3" SortStr="descend" maxPeaksInResult="4" minOverMaximumThreshold="0.66" baseVal="0"/>
-					<validationFrames plotEnable="0" minPeakHeight="6" SortStr="descend" maxPeaksInResult="3" minOverMaximumThreshold="0.66" baseVal="0"/>
-				</displacementInterferenceEstimator>
-				<interferenceFrequencyEstimator plotEnable="0" validFrames = "1" fullSavingEnable="0">
-					<rough processingEnable="1" plotEnable="0" percentRange="10" percentStep="0.1" dfPercentAccuracy="0.01" nPeaks="5"  minPeakDistance="3" mainFramesNumber="2" additionalFramesNumber="4" SortStr="descend" maxPeaksInResult="4" minOverMaximumThreshold="0.66" baseVal="0"/>
-					<accurate processingEnable="0" plotEnable="0" percentRange="1.0" percentStep="0.01" dfPercentAccuracy="0.01" nPeaks="5"  minPeakDistance="3" mainFramesNumber="2" additionalFramesNumber="3" SortStr="descend" maxPeaksInResult="4" minOverMaximumThreshold="0.66" baseVal="0"/>
-					<validationFrames plotEnable="0" minPeakHeight="6" SortStr="descend" maxPeaksInResult="3" minOverMaximumThreshold="0.66" baseVal="0"/>
-				</interferenceFrequencyEstimator>
-				<fuzzyFrequencyEstimator plotEnable="0" lowLevel="0" averageLevel="1" highLevel="2" lowNum="50" averageNum="20" highNum="10" minPeaksDistance="0" minPeakProminence="2.0" maxPeakFrequency="1000" fullSavingEnable="0">
-					<rough processingEnable="1" plotEnable="1" peakComparisonPercentRange="0.3" peakComparisonFreqRange="0" peakComparisonModeFunction="0" schemeValidatorFuzzyResultEnable="0" percentRange="3" percentStep="0.1" dfPercentAccuracy="0.01" nPeaks="5" minRMSPeakHeight="1"  minPeakDistance="3" SortStr="descend" maxPeaksInResult="4" minOverMaximumThreshold="0.66" baseVal="0"/>
-					<accurate processingEnable="0" plotEnable="1" peakComparisonPercentRange="0.2" peakComparisonFreqRange="0" peakComparisonModeFunction="0" schemeValidatorFuzzyResultEnable="0" percentRange="0.3" percentStep="0.02" dfPercentAccuracy="0.01" nPeaks="5" minRMSPeakHeight="1"  minPeakDistance="3" SortStr="descend" maxPeaksInResult="4" minOverMaximumThreshold="0.66" baseVal="0"/>
-				</fuzzyFrequencyEstimator>
-            </frequencyCorrector>
-			
-            <spectralHistoryHandler intensivityThreshold="0.3" intensivityResultRange="0.25, 0.75"/>
-            <intensivityHandler frameLength="3" frameOverlap="1"/>
-            <trend plotEnable="0" rmsAccuracyPrimary="15" rmsAccuracySecondary="25" slopesThreshold="3" meanDuration="4" signalVolatilityThreshold="30" approxVolatilityThreshold="20" segmentPeriod="6"/>
-            <printAxonometry modeSaveData ="0" range="5 5000"/>
-            
-			<scalogramHandler plotEnable="1" plotVisible="on" processingEnable="1" shortSignalEnable="0" scalogramType='swd+norm'>
-				<shortSignal  plotEnable="0" type='multi' description="Cut-off the original signal and form the shortened one from one @mono piece or several @multi pieces">
-					<mono startSecond="2" lengthSeconds="10"/>
-					<multi framesNumber="10" secondsPerFrame="1"/>
-				</shortSignal>
-				<scalogram plotEnable="1" scaleType="log2" waveletName="gabor" waveletFormFactor="10" secondsPerFrame="30" varianceEnable="1" interpolationEnable="1" interpolationFactor="8">
-					<log2 lowFrequency="1" highFrequency="1000" frequenciesPerOctave="8" roundingEnable="0"/>
-					<linear lowFrequency="250" highFrequency="24000" frequencyStep="100"/>
-				</scalogram>
-                <octaveScalogram lowFrequency="360" highFrequency="24000" filterMode="1/3 octave" roundingEnable="1" warningLevel="" damageLevel="" description=""/>
-				<peaksFinder> 
-					<swdScalogram plotEnable="1" heightThresholds="0.85;1.15;10" widthThresholds="1;2;10" prominenceThresholds="0.08;0.25;10" stepsNumberThreshold="2" interpolationEnable="1" interpolationFactor="8" validityThresholds="0.55, 0.65, 0.75" mbValidPeaksEnable="1" excludeClosePeaksEnable="0" maxValidPeaksNumber="3" minValidPeaksDistance="50" peakValidationMethod="Coarse" energyThresholdMethod='2' energyThresholds="0.35;0.15;1.0;1.0;1.0;1.0;" coarseEnergyValodationThreshold="0.05" description="" >
-						<energyEstimation plotEnable="1" scalogramEnergyEstimation="1" scalogramEnergyForceRecast="0" energyEstimationMethod="minScalHillHeight_upperValleyWidth" energyEstimationThresholds="0.15, 0.075, 0.01" energyEstimationLabels="High, Medium, Low, Insign" plotKeepAdditionalData="0"/>
-					</swdScalogram>
-					<normalizedScalogram plotEnable="1" heightThresholds="0.85;1.15;10" widthThresholds="1;2;10" prominenceThresholds="0.08;0.25;10" stepsNumberThreshold="2" interpolationEnable="1" interpolationFactor="8" validityThresholds="0.55, 0.65, 0.75" mbValidPeaksEnable="1" excludeClosePeaksEnable="0" maxValidPeaksNumber="3" minValidPeaksDistance="50" peakValidationMethod="Coarse" energyThresholdMethod='2' energyThresholds="0.35;0.15;1.0;1.0;1.0;1.0;" coarseEnergyValodationThreshold="0.05" description="" >
-						<energyEstimation plotEnable="1" scalogramEnergyEstimation="1" scalogramEnergyForceRecast="0" energyEstimationMethod="minScalHillHeight_upperValleyWidth" energyEstimationThresholds="0.15, 0.075, 0.01" energyEstimationLabels="High, Medium, Low, Insign" plotKeepAdditionalData="0"/>
-					</normalizedScalogram>
-                </peaksFinder>
-			</scalogramHandler>
-            
-            <periodicityProcessing processingEnable="1" plotEnable="1" description="Search for periodicities in the time-domain signal">
-                <correlationHandler comparePercentRange="5" maxFrequency="1000" minFrequency="4" plotEnable="0" periodsTableComparisonEnable="1">
-					<peaksDistanceEstimation  peaksPerFrame="3" peaksOverlap="2" validationThreshold="0.25">
-						<ThresholdLin zero="0.001" low="0.05" average="0.1" high="0.2" />
-						<ThresholdLog zero="0" low="1" average="2" high="3" />
-						<cutNoiseAndRescaling originalProcessingEnable="1" linearProcessingEnable="1" linearWindWidth="2" logProcessingEnable="1" logWindWidth="2:3" />
-					</peaksDistanceEstimation>
-					<similarPeriods similarPeriodsEnable="1" resonantPeriodsEnable="1" sideLeafDelete="1" sideLeafMem="1" lowFalseDelete="1" lowFalseMem="1" trashPeaksTableDelete="1" freqRangeLimit="1"/>
-					<interfPeriodEstimation processingEnable="1" interfValidityWeight="0.3"/>
-					<interfPeriodFinding processingEnable="1" falsePeriodsDelete="1" baseSamplesNum="5"/>
-                    <smoothedACFprocessing originalProcessingEnable="0" logProcessingEnable="0" smoothMethods="windowAveraging slideAveraging centralSlideAveraging" span="2width 2dist"/>
-					<correlation envelopeEnable="1" maxFreq="1000" minFreqPeriods="10" normalizationEnable="1" />
-				</correlationHandler>   
-            </periodicityProcessing>
-            
-            <sparseProcessing description="For tests only! Currently UNUSED!"  processingEnable="0" plotEnable="1" plotPeriodsNumber="Inf" PlotNotValidSparseComponents="1">
-				<sparseDecomposer shortSignalEnable="1">
-					<shortSignal  plotEnable="0" type='mono' description="Cut-off the original signal and form the shortened one from one @mono piece or several @multi pieces">
-						<mono startSecond="0.01" lengthSeconds="1"/>
-						<multi framesNumber="5" secondsPerFrame="0.2"/>
-					</shortSignal>
-					<optimalIterationsNumber plotEnable="1" maxIterationsNumber="10000" graphPointsNumber="50" optimalKurtosisFactor="1.27" percentRange="1" interpolationFactor="100" />
-					<sparseDecomposition plotEnable="1" nonnegativeEnable="0" deadzone="0"/>
-				</sparseDecomposer>
-				<correlationHandler comparePercentRange="5" maxFrequency="1000" minFrequency="4" plotEnable="0" periodsTableComparisonEnable="1">
-					<peaksDistanceEstimation  peaksPerFrame="3" peaksOverlap="2" validationThreshold="0.25">
-						<ThresholdLin zero="0.001" low="0.05" average="0.1" high="0.2" />
-						<ThresholdLog zero="0" low="1" average="2" high="3" />
-						<cutNoiseAndRescaling originalProcessingEnable="1" linearProcessingEnable="1" linearWindWidth="2" logProcessingEnable="1" logWindWidth="2:3" />
-					</peaksDistanceEstimation>
-					<similarPeriods similarPeriodsEnable="1" resonantPeriodsEnable="1" sideLeafDelete="1" sideLeafMem="1" lowFalseDelete="1" lowFalseMem="1" trashPeaksTableDelete="1" freqRangeLimit="1"/>
-					<interfPeriodEstimation processingEnable="1" interfValidityWeight="0.3"/>
-					<interfPeriodFinding processingEnable="1" falsePeriodsDelete="1" baseSamplesNum="5"/>
-					<correlation envelopeEnable="1" maxFreq="1000" minFreqPeriods="10" normalizationEnable="1" />
-				</correlationHandler>
-				<dividedFindpeaks plotEnable="0" lowFrequency="5" framesNumber="10" frameOverlapValue="5" minPeakProminenceCoef="2.5" minPeaksDistance="0.2"/>
-				<getSimilarElements percentRange="3" freqRange="0" sortBy="global"/>
-			</sparseProcessing>
-            
-			<sparseClassifier description="">
-			</sparseClassifier>
-			
-            <spm filterType="HPF" lowFreq="200" highFreq="20000" Rp="1" Rs="10" timeInterval="5">
-                <spmDBmDBc plotEnable="0" warningLevel="20" damageLevel="30" peakCntPerSecondRequired="200" accurate="0.05" distance="20" numberThresh="10"/>
-                <spmLRHR plotEnable="0" warningLevel="" damageLevel="" meanOfPeakCountLr="40" peakCntPerSecondRequiredHr="1000" distance="20" numberThresh="10" accurate="0.05"/>
-            </spm> 
-            <iso15242 plotEnable="0" sensevity="0.016" damageLevel="" warningLevel="" timeInterval="5" Rp="0.1" Rs="20" F_Low="50" F_Med1="300" F_Med2="1800" F_High="10000" v_rms_nominal="0.05e-6"/>
-
         </evaluation>
-        
-        <imager imageFormat="jpeg" imageQuality="91" imageResolution="180" imagePosition="0, 0, 800, 600" legendLocation="southeast" description="">
-            <getEnvSpectrum processingEnable="1" scale="1.2"/>
-            <plotAndPrintDefect processingEnable="1" scale="1.2"/>
-            <plotAndPrintTrends processingEnable="1" minPeriod="4"/>
-        </imager>
     </parameters>
 </config>
