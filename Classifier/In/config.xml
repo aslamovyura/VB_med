@@ -14,7 +14,7 @@
             <waveletDenoising processingEnable="1" deviceType="1" minPeakHeight="0.05" minPeakDistance="0.6" wname="sym7" level="" >
                 <periodicityCalculation processingEnable="1" description="Enables finding periodicities" />   
             </waveletDenoising>
-            <spectrumFiltration MinPeakHeight = "0.00005" TimePeakDistance = "0.7" plotEnable = "1" DetailedPlotEnable = "1" printPlotEnable = "1"/>
+            <spectrumFiltration minPeakHeight = "0.00005" timePeakDistance = "0.7" plotEnable = "0" detailedPlotEnable = "0" printPlotEnable = "1"/>
 
             
         </evaluation>
