@@ -52,6 +52,9 @@ function [file,config] = initializationMed()
         signal = decimate(signal, decimateFactor);
         Fs = 4000;
     end
+    
+    signalMaximum = max(signal);
+    signal = signal./signalMaximum;
 
     file = [];
     file.Fs = Fs;

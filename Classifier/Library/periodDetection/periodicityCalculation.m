@@ -19,6 +19,7 @@ function [meanPeriodicity, locs, meanPeriodicityNew] = periodicityCalculation(si
     if str2double(config.waveletDenoising.periodicityCalculation.processingEnable)
         [~, locs] = findpeaks(signal, t, 'MinPeakDistance', minPeakDistance, 'MinPeakHeight', minPeakHeight);
         summaryPeriodicity = 0;
+        locs = toneValidity(signal, t, config, locs);
         for i = 1:length(locs)-1
             periodicityHigh = locs(i+1);
             periodicityLow = locs(i);

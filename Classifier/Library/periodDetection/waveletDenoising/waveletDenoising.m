@@ -51,7 +51,11 @@ function [locsDenoisedSamples, locsResidualSamples] = waveletDenoising(file, con
         %% ========================== Main Calculations =======================%%
 
         [waveletDenoiseSignal, decompositionFiltered, decompositionNonFiltered, coefficientsValidity ] = func_denoise_sw1d(signal, signalLength, Fs, deviceType, wname, decompositionLevels);
+        waveletDenoiseSignalMaximum = max(waveletDenoiseSignal);
+        waveletDenoiseSignal = waveletDenoiseSignal./waveletDenoiseSignalMaximum;
         waveletFilteredResidualSignal = signal - waveletDenoiseSignal';
+        waveletFilteredResidualSignalMaximum = max(waveletFilteredResidualSignal);
+        waveletFilteredResidualSignal = waveletFilteredResidualSignal./waveletFilteredResidualSignalMaximum;
         [meanKurtosisValueFiltered, minKurtosisValueFiltered] = windowKurtosis(waveletDenoiseSignal, Fs);
         [signalMeanKurtosis, signalMinKurtosis] = windowKurtosis(signal, Fs);
   
