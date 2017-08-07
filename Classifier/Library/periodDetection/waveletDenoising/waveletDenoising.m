@@ -20,7 +20,8 @@ function [locsDenoisedSamples, locsResidualSamples] = waveletDenoising(file, con
 %% ================== Set parameters =================================== %%
     minPeakDistance = str2double(config.waveletDenoising.minPeakDistance);
     minPeakHeight = str2double(config.waveletDenoising.minPeakHeight);
-    printPlotsEnable = config.waveletDenoising.PrintPlotsEnable;
+    plotsEnable = config.waveletDenoising.plotsEnable;
+    printPlotsEnable = config.waveletDenoising.printPlotsEnable;
     detailedPlotsEnable = config.waveletDenoising.detailedPlotsEnable;
     wname = config.waveletDenoising.wname;
     deviceType = config.waveletDenoising.deviceType;
@@ -29,14 +30,18 @@ function [locsDenoisedSamples, locsResidualSamples] = waveletDenoising(file, con
     if str2double(config.waveletDenoising.enable)
         signal = file.signal;
         Fs = file.Fs;
-        if str2double(config.waveletDenoising.decimationEnable)
-            decimateFactor = Fs/4000;
-            signal = decimate(signal, decimateFactor);
-            Fs = 4000;
-        end
+%         if str2double(config.waveletDenoising.decimationEnable)
+%             decimateFactor = Fs/4000;
+%             signal = decimate(signal, decimateFactor);
+%             Fs = 4000;
+%         end
 
         %     %Using 1-st channel of signal
-        signal = signal(:,1);
+%         signal = signal(:,1);
+
+        if size(signal, 1) < size(signal, 2)
+            signal = signal';
+        end
         signalLength = length(signal);    
     
         dt = 1/Fs;
@@ -95,24 +100,29 @@ function [locsDenoisedSamples, locsResidualSamples] = waveletDenoising(file, con
 
         % figure, plot(t, waveletFilteredResidualSignal);
 
-        if str2double(printPlotsEnable)
+        if str2double(plotsEnable)
             figure, findpeaks(waveletFilteredResidualSignal, Fs, 'MinPeakDistance', minPeakDistance, 'MinPeakHeight', minPeakHeight);
             xlabel('Time (sec)');
             ylabel('Amplitude');
             title('Wavelet Filtered Residual Signal');
-            fileName = 'Wavelet Filtered Residual Signal';
-            fullFilePath = fullfile(pwd,'Out');
-            fullFileName = fullfile(fullFilePath,fileName);
-            print(fullFileName,'-djpeg91', '-r180');
+            if str2double(printPlotsEnable)
+                fileName = 'Wavelet Filtered Residual Signal';
+                fullFilePath = fullfile(pwd,'Out');
+                fullFileName = fullfile(fullFilePath,fileName);
+                print(fullFileName,'-djpeg91', '-r180');
+            end
             
             figure, findpeaks(waveletDenoiseSignal, Fs, 'MinPeakDistance', minPeakDistance, 'MinPeakHeight', minPeakHeight)
             xlabel('Time (sec)');
             ylabel('Amplitude');
-            title(strcat('Wavelet denoise Signal, mean kurtosis = ', mat2str(meanKurtosisValueFiltered), ', min kurtosis = ', mat2str(minKurtosisValueFiltered)));
-            fileName = strcat('Wavelet denoise Signal, mean kurtosis = ', mat2str(meanKurtosisValueFiltered), ', min kurtosis = ', mat2str(minKurtosisValueFiltered), '.jpg');
-            fullFilePath = fullfile(pwd,'Out');
-            fullFileName = fullfile(fullFilePath,fileName);
-            print(fullFileName,'-djpeg91', '-r180');
+%             title(strcat('Wavelet denoise Signal, mean kurtosis = ', mat2str(meanKurtosisValueFiltered), ', min kurtosis = ', mat2str(minKurtosisValueFiltered)));
+            title('Wavelet denoise Signal');
+            if str2double(printPlotsEnable)
+                fileName = 'Wavelet denoise Signal';
+                fullFilePath = fullfile(pwd,'Out');
+                fullFileName = fullfile(fullFilePath,fileName);
+                print(fullFileName,'-djpeg91', '-r180');
+            end
             
 
 %             figure, plot(t,signal, 'b', t (locsDenoisedSamples'), signal(locsDenoisedSamples'), 'r*'); 

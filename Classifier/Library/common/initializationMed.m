@@ -48,7 +48,7 @@ function [file,config] = initializationMed()
     [signal, Fs] = audioread(fileList{wavPositions,1});
 
     if Fs > 4000    % Signal decimation for processing acceleration
-        decimateFactor = Fs/4000;
+        decimateFactor = round(Fs/4000);
         signal = decimate(signal, decimateFactor);
         Fs = 4000;
     end

@@ -7,15 +7,17 @@
             <parpoolEnable value="0" description="Enable parallel calculations"/>
             <windowKurtosis value="1" description="Enable window kurtosis calculation" />
             <waveletDenoiseEnable value="1" description="Enable wavelet signal denoising using swt" />
-            <plotOriginalSignal value="1" description="Enable plotting original signal"/>
+            <decisionMaker value="1" description="Enable plotting original signal"/>
         </common>
         
         <evaluation description="Evaluation includes the main functions and methods parameters">
 
-            <waveletDenoising deviceType="1" minPeakHeight="0.05" minPeakDistance="0.6" wname="sym7" level="" detailedPlotsEnable="0" decimationEnable="1">
-                <periodicityCalculation processingEnable="1" plotEnable="0" description="Enables finding periodicities" />   
+            <waveletDenoising deviceType="1" minPeakHeight="0.05" minPeakDistance="0.6" wname="sym7" level="" detailedPlotsEnable="0" decimationEnable="1" plotsEnable="1">
+                <periodicityCalculation processingEnable="1" plotsEnable="0" description="Enables finding periodicities" />   
             </waveletDenoising>
-            <spectrumFiltration minPeakHeight = "0.00005" timePeakDistance = "0.6" plotEnable = "1" detailedPlotEnable = "0" printPlotEnable = "0"/>
+            <decisionMaker plotsEnable="1" />
+            
+            <spectrumFiltration minPeakHeight = "0.00005" timePeakDistance = "0.6" plotEnable = "1" detailedPlotEnable = "0" printPlotEnable = "1"/>
         
             
             

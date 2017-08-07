@@ -39,7 +39,7 @@ function [meanPeriodicity, locs, meanPeriodicityNew] = periodicityCalculation(si
         if nnz(periodicityTemp) ~= numel(periodicityTemp)
             meanPeriodicityNew = sum(periodicityTemp)/nnz(periodicityTemp);
         end
-        if str2double(config.waveletDenoising.periodicityCalculation.plotEnable)
+        if str2double(config.waveletDenoising.periodicityCalculation.plotsEnable)
             figure, plot(j, periodicityTemp, 'b')
             title('Periodicity values denoised signal');
             xlabel('Iteration');
