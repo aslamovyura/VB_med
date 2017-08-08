@@ -10,3 +10,4 @@ addpath(fullfile(pwd, 'Library', 'wavelet','common'));
 addpath(fullfile(pwd, 'Library', 'wavelet','basis'));
 addpath(fullfile(pwd, 'Library', 'wavelet','basis','swdBasis'));
 addpath(fullfile(pwd, 'Library', 'decisionMaker'));
+addpath(fullfile(pwd, 'Library', 'periodDetection', 'springer'));
