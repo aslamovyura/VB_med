@@ -43,8 +43,7 @@ end
 %% Form the resulting struct which contains S1, S2, systole, diastole and RR
 
 segments = struct('S1', [], 'S2', [], 'Sys', [], 'Dia' , [], 'RR', []);
-                            
-                        
+                                                
 signalLength = length(signal);
 
 prevSampleState = assigned_states(1,1);
@@ -74,7 +73,6 @@ for i=2:signalLength
 
         end
         
-        numO = numO + size(tempSegment, 2);
         tempSegment = [signal(i,1)];
         
         if curSampleState == 1
@@ -84,9 +82,7 @@ for i=2:signalLength
         else
             tempRRSegment = [tempRRSegment signal(i,1)];
         end
-        
-        
-        
+     
     else
         tempSegment = [tempSegment signal(i,1)];
         tempRRSegment = [tempRRSegment signal(i,1)];
