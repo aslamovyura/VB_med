@@ -64,7 +64,7 @@ add_path
     
     %% ________________ Springer's Method ____________________________ %%
 
-    springerMethod(file);
+    segments = springerMethod(file);
     
     
     

@@ -1,4 +1,4 @@
-function springerMethod(file)
+function segments = springerMethod(file)
 
 %% Load the default options:
 % These options control options such as the original sampling frequency of
@@ -38,4 +38,76 @@ numPCGs = length(test_recordings);
 
 for PCGi = 1:numPCGs
     [assigned_states] = runSpringerSegmentationAlgorithm(test_recordings{PCGi}, springer_options.audio_Fs, B_matrix, pi_vector, total_obs_distribution, true);
+end
+
+%% Form the resulting struct which contains S1, S2, systole, diastole and RR
+
+segments = struct('S1', [], 'S2', [], 'Sys', [], 'Dia' , [], 'RR', []);
+                            
+                        
+signalLength = length(signal);
+
+prevSampleState = assigned_states(1,1);
+tempSegment = signal(1,1);
+tempRRSegment = [];
+numOfSegs = zeros(1,4);
+numOfRRs = 0;
+
+for i=2:signalLength    
+    curSampleState = assigned_states(i,1);
+    
+    if curSampleState ~= prevSampleState
+    
+        numOfSegs(1, prevSampleState) = numOfSegs(1, prevSampleState) + 1;
+        ind = numOfSegs(1, prevSampleState);
+        
+        switch prevSampleState
+                       
+            case 1
+                segments.S1{ind} = tempSegment;
+            case 2
+                segments.Sys{ind} = tempSegment;
+            case 3
+                segments.S2{ind} = tempSegment;
+            case 4    
+                segments.Dia{ind} = tempSegment;
+
+        end
+        
+        numO = numO + size(tempSegment, 2);
+        tempSegment = [signal(i,1)];
+        
+        if curSampleState == 1
+            numOfRRs = numOfRRs + 1;
+            segments.RR{numOfRRs} = tempRRSegment;
+            tempRRSegment = [signal(i,1)];
+        else
+            tempRRSegment = [tempRRSegment signal(i,1)];
+        end
+        
+        
+        
+    else
+        tempSegment = [tempSegment signal(i,1)];
+        tempRRSegment = [tempRRSegment signal(i,1)];
+    end
+    
+    prevSampleState = curSampleState;
+    
+end
+
+% add the last chunk
+numOfSegs(1, curSampleState) = numOfSegs(1, curSampleState) + 1;
+ind = numOfSegs(1, curSampleState);
+        
+switch curSampleState
+
+    case 1
+        segments.S1{ind} = tempSegment;
+    case 2
+        segments.Sys{ind} = tempSegment;
+    case 3
+        segments.S2{ind} = tempSegment;
+    case 4    
+        segments.Dia{ind} = tempSegment;
 end
