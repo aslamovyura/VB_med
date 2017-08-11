@@ -53,8 +53,11 @@ function [file,config] = initializationMed()
         Fs = 4000;
     end
 
+    [despiked_signal] = schmidt_spike_removal(signal, Fs);
+    [heartRate, systolicTimeInterval] = getHeartRateSchmidt(signal, Fs, 1);
+    
     file = [];
     file.Fs = Fs;
-    file.signal = signal;
+    file.signal = despiked_signal;
 
 end

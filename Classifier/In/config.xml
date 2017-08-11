@@ -15,11 +15,11 @@
             <waveletDenoising deviceType="1" minPeakHeight="0.05" minPeakDistance="0.6" wname="sym7" level="" detailedPlotsEnable="0" decimationEnable="1">
                 <periodicityCalculation processingEnable="1" plotEnable="0" description="Enables finding periodicities" />   
             </waveletDenoising>
-            <spectrumFiltration minPeakHeight = "0.00005" timePeakDistance = "0.6" plotEnable = "1" detailedPlotEnable = "0" printPlotEnable = "0"/>
-        
+            <spectrumFiltration minPeakHeight = "0.00005" timePeakDistance = "0.6" plotEnable = "1" detailedPlotEnable = "1" printPlotEnable = "0"/>
+			<featuresExtraction>
+				<frequencyDomain numOfMFCC = "13" Fs = "1000" lifterEnable = "1"/>
             
-            
-
+			</featuresExtraction>
         </evaluation>
     </parameters>
 </config>

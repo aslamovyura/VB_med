@@ -1,4 +1,10 @@
 function [peakLocations] = spectrumFiltration(file, parameters)
+%% Function description:
+% This function passes the signal through the filter bank. 
+% Then choose the result with the biggest kurtosis and apply function 
+% "findpeaks" to this variant. 
+%% In: file.signal, file.Fs, parameters of the processing
+%% Out: peakLocations - locations of the peaks(1st tone) in the original signal
 %% ___________________initialization________________________________%%
     Fs = file.Fs;
     signal = file.signal;
