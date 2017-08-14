@@ -76,7 +76,6 @@ add_path
     signalSegments = springerMethod(file); 
     %%
     parameters = [];
-    parameters.classification.printPlotsEnable = config.config.parameters.common.printPlotsEnable.Attributes.value;
     parameters.classification.enable = config.config.parameters.common.classification.Attributes.value;
     parameters.timeDomain.intervalLengthes = config.config.parameters.evaluation.timeDomainFeatures.intervalLengthes.Attributes.processingEnable;
     parameters.timeDomain.intervalRatios = config.config.parameters.evaluation.timeDomainFeatures.intervalRatios.Attributes.processingEnable;
@@ -85,8 +84,8 @@ add_path
     parameters.timeDomain.skewness = config.config.parameters.evaluation.timeDomainFeatures.skewness.Attributes.processingEnable;
     parameters.frequencyDomain.powerSpectrum = config.config.parameters.evaluation.frequencyDomainFeatures.powerSpectrum.Attributes.processingEnable;
     parameters.frequencyDomain.MFCC = config.config.parameters.evaluation.frequencyDomainFeatures.MFCC.Attributes.processingEnable;
-
-    features = featuresExtraction(signalSegments, file, parameters);
+    features = getTimeDomainFeatures(signalSegments, parameters);
+%     features = frequencyDomainFeatures(signalSegments, file, config);
 % catch 
 
 % 	Errors checking

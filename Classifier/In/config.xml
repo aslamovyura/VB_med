@@ -7,19 +7,32 @@
             <parpoolEnable value="0" description="Enable parallel calculations"/>
             <windowKurtosis value="1" description="Enable window kurtosis calculation" />
             <waveletDenoiseEnable value="1" description="Enable wavelet signal denoising using swt" />
-            <decisionMaker value="1" description="Enable plotting original signal"/>
+            <classification value="1" description="Enable getting time-dpmain features for classification" />
+            
+            <decisionMaker value="1" description="Enable plotting original signal. UNUSED"/>
         </common>
         
         <evaluation description="Evaluation includes the main functions and methods parameters">
 
-            <waveletDenoising deviceType="1" minPeakHeight="0.05" minPeakDistance="0.6" wname="sym7" level="" detailedPlotsEnable="0" decimationEnable="1" plotsEnable="1">
+            <waveletDenoising deviceType="1" minPeakHeight="0.05" minPeakDistance="0.6" wname="sym7" level="" detailedPlotsEnable="0" plotsEnable="1">
                 <periodicityCalculation processingEnable="1" plotsEnable="0" description="Enables finding periodicities" />   
             </waveletDenoising>
             <decisionMaker plotsEnable="1" />
             
             <spectrumFiltration minPeakHeight = "0.00005" timePeakDistance = "0.6" plotEnable = "1" detailedPlotEnable = "0" printPlotEnable = "1"/>
         
+            <timeDomainFeatures>
+                <intervalLengthes processingEnable="1" />
+                <intervalRatios processingEnable="1" />
+                <meanAmplitudesRatios processingEnable="1"/>
+                <kurtosis processingEnable="1" />
+                <skewness processingEnable="1" />
+            </timeDomainFeatures>
             
+            <frequencyDomainFeatures>
+                <powerSpectrum processingEnable="1" />
+                <MFCC processingEnable="1" />
+            </frequencyDomainFeatures>
             
 
         </evaluation>

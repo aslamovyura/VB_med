@@ -1,61 +1,49 @@
-function [locsDenoisedSamples, locsResidualSamples] = waveletDenoising(file, config) 
-% tic
-% clc;
-% clear all;
-% close all;
-% 
-% %% ============= Set default parameters ================%%
-% Root = fileparts(mfilename('fullpath'));
-% cd(Root);
-% 
-% if ~exist(fullfile(pwd, 'Out'))
-%     mkdir(fullfile(pwd, 'Out'));
-% end
+function result = waveletDenoising(file, config) 
 
-%deviceType - type of device used for getting signal
-%deviceType = '1' - stethoscope
-%deviceType = '2' - cellphone
-% deviceType = '2';
+% This function denoises signal using stationary wavelet transform (SWT)
+% decomposition
 
-%% ================== Set parameters =================================== %%
+% Developer : A. Bourak
+% Date :      27/07/2017
+% Modified:   A. Bourak 11/08/2017
+
+%% ________________________ Set parameters _____________________________ %%
     minPeakDistance = str2double(config.waveletDenoising.minPeakDistance);
     minPeakHeight = str2double(config.waveletDenoising.minPeakHeight);
     plotsEnable = config.waveletDenoising.plotsEnable;
     printPlotsEnable = config.waveletDenoising.printPlotsEnable;
     detailedPlotsEnable = config.waveletDenoising.detailedPlotsEnable;
-    wname = config.waveletDenoising.wname;
-    deviceType = config.waveletDenoising.deviceType;
-    decompositionLevels = str2double(config.waveletDenoising.level);
     
+
+%%________________________ Main Calculations ____________________________%%    
     if str2double(config.waveletDenoising.enable)
         signal = file.signal;
         Fs = file.Fs;
-%         if str2double(config.waveletDenoising.decimationEnable)
-%             decimateFactor = Fs/4000;
-%             signal = decimate(signal, decimateFactor);
-%             Fs = 4000;
-%         end
-
-        %     %Using 1-st channel of signal
-%         signal = signal(:,1);
 
         if size(signal, 1) < size(signal, 2)
             signal = signal';
         end
+        
         signalLength = length(signal);    
     
         dt = 1/Fs;
         tmax = dt*signalLength;
         t = 0:dt:tmax-dt;
-
-        %% ========================== Main Calculations =======================%%
-
-        [waveletDenoiseSignal, decompositionFiltered, decompositionNonFiltered, coefficientsValidity ] = func_denoise_sw1d(signal, signalLength, Fs, deviceType, wname, decompositionLevels);
+        
+        %Calculating signaldecomposition using SWT
+        [waveletDenoiseSignal, decompositionFiltered, decompositionNonFiltered, coefficientsValidity ] = func_denoise_sw1d(file, config);
+        
+        %Signal normalization
         waveletDenoiseSignalMaximum = max(waveletDenoiseSignal);
         waveletDenoiseSignal = waveletDenoiseSignal./waveletDenoiseSignalMaximum;
+        
+        %Calculating and normalization residual signal
         waveletFilteredResidualSignal = signal - waveletDenoiseSignal';
         waveletFilteredResidualSignalMaximum = max(waveletFilteredResidualSignal);
         waveletFilteredResidualSignal = waveletFilteredResidualSignal./waveletFilteredResidualSignalMaximum;
+        
+        %Calculating mean and min kurtosis values for original signal and
+        %wavelet denoised signal
         [meanKurtosisValueFiltered, minKurtosisValueFiltered] = windowKurtosis(waveletDenoiseSignal, Fs);
         [signalMeanKurtosis, signalMinKurtosis] = windowKurtosis(signal, Fs);
   
@@ -96,14 +84,13 @@ function [locsDenoisedSamples, locsResidualSamples] = waveletDenoising(file, con
                 print(fullFileName,'-djpeg91', '-r180');
 
                 if coefficientsValidity(i) == 1
-                    [meanPeriodicityNonFiltered] = periodicityCalculation(decompositionNonFiltered(i,:), t, minPeakDistance, minPeakHeight, config);
+                    meanPeriodicityNonFiltered = periodicityCalculation(decompositionNonFiltered(i,:), t, minPeakDistance, minPeakHeight, config);
                 end
 
             end
         end
 
-        % figure, plot(t, waveletFilteredResidualSignal);
-
+        %Plot wavelet denoised and residual signals with peaks 
         if str2double(plotsEnable)
             figure, findpeaks(waveletFilteredResidualSignal, Fs, 'MinPeakDistance', minPeakDistance, 'MinPeakHeight', minPeakHeight);
             xlabel('Time (sec)');
@@ -151,13 +138,29 @@ function [locsDenoisedSamples, locsResidualSamples] = waveletDenoising(file, con
 %             print(fullFileName,'-djpeg91', '-r180');
         end
         
-        [meanPeriodicityResidualSignal, locsResidual] = periodicityCalculation(waveletFilteredResidualSignal, t, minPeakDistance, minPeakHeight, config);
+        %Calculating periodicity of the residual signal
+        [meanPeriodicityResidualSignal, locsResidual, ~, residualSignalAllPeriodicities, residualSignalExcludedPeriodicities] = periodicityCalculation(waveletFilteredResidualSignal, file, config);
         locsResidualSamples = int64(locsResidual*Fs + 1);
+        %Extraction of the frames in the residual signal using periodicity
+        [residualSignalMeanFramesTable, residualSignalFullFramesTable] = framesExtraction(signal, file, config, meanPeriodicityResidualSignal, residualSignalAllPeriodicities, residualSignalExcludedPeriodicities);
 
-        [meanPeriodicityDenoisedSignal, locsDenoised] = periodicityCalculation(waveletDenoiseSignal, t, minPeakDistance, minPeakHeight, config);
+        %Calculating periodicity of the wavelet denoised signal
+        [meanPeriodicityDenoisedSignal, locsDenoised, ~, denoisedSignalAllPeriodicities, denoisedSignalExcludedPeriodicities] = periodicityCalculation(waveletDenoiseSignal, file, config);
         locsDenoisedSamples = int64(locsDenoised*Fs + 1);
+        %Extraction of the frames in the wavelet denoised signal using periodicity
+        [denoisedSignalMeanFramesTable, denoisedSignalFullFramesTable] = framesExtraction(signal, file, config, meanPeriodicityResidualSignal, denoisedSignalAllPeriodicities, denoisedSignalExcludedPeriodicities);
         
-
+        %Write results to structure
+        result.residualSignal.meanPeriodicity = meanPeriodicityResidualSignal;
+        result.residualSignal.locsSamples = locsResidualSamples;
+        result.residualSignal.meanFramesTable = residualSignalMeanFramesTable;
+        result.residualSignal.fullFramesTable = residualSignalFullFramesTable;
+        
+        result.denoisedSignal.meanPeriodicity = meanPeriodicityDenoisedSignal;
+        result.denoisedSignal.locsSamples = locsDenoisedSamples;
+        result.denoisedSignal.meanFramesTable = denoisedSignalMeanFramesTable;
+        result.denoisedSignal.fullFramesTable = denoisedSignalFullFramesTable;
+        
         % toc
     end
 end

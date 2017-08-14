@@ -1,4 +1,14 @@
-function [KMean, KMin, validityFlag] = windowKurtosis (signal, Fs)
+function [KMean, KMin, validityFlag] = windowKurtosis (signal, Fs) % revise changing input parameters to "file" structure
+% This function calculates kurtosis for signal divided 
+% into windows with overlap and returns the following values:
+% 'KMean' which contains the mean kurtosis value over all windows;
+% 'KMin' - the least kurtosis value over all windows;
+% 'validityFlag' indicates whether the signal is valid,
+% i.e. whose mean kurtosis value is greater than "thresholdKurtosisLevel"
+% (5 by default) and standard deviation of kurtosis values over all windows 
+% is less than "thresholdSTDLevel" (15 by default).
+
+% created by Ivan Trus
 
 %% ___________________ DEFAULT_PARAMETERS _____________________________ %%
 

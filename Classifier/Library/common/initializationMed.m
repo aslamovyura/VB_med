@@ -46,14 +46,28 @@ function [file,config] = initializationMed()
     else
        
     [signal, Fs] = audioread(fileList{wavPositions,1});
-
-    if Fs > 4000    % Signal decimation for processing acceleration
-        decimateFactor = round(Fs/4000);
-        signal = decimate(signal, decimateFactor);
-        Fs = 4000;
+    
+    %using 1-st channel of signal
+    if size(signal, 2) > 1 
+        signal = signal(:, 1);
     end
     
-    signalMaximum = max(signal);
+    % Signal decimation for processing acceleration
+    if Fs > 1000    
+        decimateFactor = round(Fs/1000);
+        signal = decimate(signal, decimateFactor);
+        Fs = 1000;
+    end
+    
+    %band-pass signal filtration 25-400Hz 4th order Butterworth 
+    signal = butterworth_low_pass_filter(signal,2,400,Fs, false);
+    signal = butterworth_high_pass_filter(signal,2,25,Fs);
+    
+    %removing spikes from signal
+    signal = schmidt_spike_removal(signal, Fs);
+    
+    %signal normalizartion
+    signalMaximum = max(abs(signal));
     signal = signal./signalMaximum;
 
     file = [];

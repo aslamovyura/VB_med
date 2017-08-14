@@ -1,14 +1,35 @@
-function [meanPeriodicity, locs, meanPeriodicityNew] = periodicityCalculation(signal, t, minPeakDistance, minPeakHeight, config)
+function [meanPeriodicity, locs, meanPeriodicityNew, allPeriodicities, excludedPeriodicities] = periodicityCalculation(signal, file, config)
 
-%% ======================== DESCRIPTION ================================ %%
+% _________________________ DESCRIPTION _________________________________ %
+%This function calculates of all valid periodicities using peakfinder
 
-% signal - signal in which periodicity need to be found
-% t - time vector
-% minPeakDistance - minimal distance between peaks for findpeks function
-% minPeakHeight - minimal peak height for findpeaks function
+% Inputs:
+% signal - analyzed signal;
+% file - contains Fs;
+% config - contains minPeakDistance, minPeakHeight and parametrs;
 
-%% ======================== MAIN CALCULATIONS ========================== %%
-    if nargin < 4
+% Outputs:
+% meanPeriodicity - mean periodicity of the signal;
+% meanPeriodicityNew - mean periodicity of the signal if there were some unvalid periodicities
+% allPeriodicities - list of all periodicities (valid and unvalid) in the signal;
+% excludedPeriodicities - unvalid periodicities;
+% locs - locations of the valid peaks on which calculates periodicities;
+
+% Developer : A. Bourak
+% Date :      04/08/2017
+% Modified:   A. Bourak 11/08/2017
+
+%% ________________________ Set default parameters _____________________ %%
+Fs = file.Fs;
+minPeakDistance = str2double(config.waveletDenoising.minPeakDistance);
+minPeakHeight = str2double(config.waveletDenoising.minPeakHeight);
+
+signalLength = length(signal);
+dt = 1/Fs;
+tmax = dt*signalLength;
+t = 0:dt:tmax-dt;
+%% ________________________ MAIN CALCULATIONS __________________________ %%
+    if nargin < 3
         disp('Not enough input arguments');
         return;
     end
@@ -17,31 +38,45 @@ function [meanPeriodicity, locs, meanPeriodicityNew] = periodicityCalculation(si
     locs = [];
     
     if str2double(config.waveletDenoising.periodicityCalculation.processingEnable)
+        %Finding peaks on which will be calculated periodicity
         [~, locs] = findpeaks(signal, t, 'MinPeakDistance', minPeakDistance, 'MinPeakHeight', minPeakHeight);
         summaryPeriodicity = 0;
+        
+        %Peaks validation
         locs = toneValidity(signal, t, config, locs);
+        
+        %Periodicities calculation
         for i = 1:length(locs)-1
             periodicityHigh = locs(i+1);
             periodicityLow = locs(i);
-            periodicityTemp(i) = periodicityHigh - periodicityLow;
-            summaryPeriodicity = summaryPeriodicity + periodicityTemp(i);
+            allPeriodicities(i) = periodicityHigh - periodicityLow;
+            summaryPeriodicity = summaryPeriodicity + allPeriodicities(i);
             if i == 1
                 j(i) = 0;   
             else
                 j(i) = j(i-1)+1;
             end
         end
-        meanPeriodicity = summaryPeriodicity / (length(periodicityTemp));
-        for i = 1:length(periodicityTemp)
-            if periodicityTemp(i) > 1.5*meanPeriodicity || periodicityTemp(i) < 0.5*meanPeriodicity
-                periodicityTemp(i) = 0;
+        %Mean periodicity calculation 
+        meanPeriodicity = summaryPeriodicity / (length(allPeriodicities));
+        
+        for i = 1:length(allPeriodicities)
+            if allPeriodicities(i) > 1.2 || allPeriodicities(i) < 0.5
+                excludedPeriodicities(i) = allPeriodicities(i);
+                allPeriodicities(i) = 0;
             end
         end
-        if nnz(periodicityTemp) ~= numel(periodicityTemp)
-            meanPeriodicityNew = sum(periodicityTemp)/nnz(periodicityTemp);
+        if ~exist('excludedPeriodicities', 'var')
+            excludedPeriodicities = zeros(1, length(allPeriodicities));
         end
+            
+        if nnz(allPeriodicities) ~= numel(allPeriodicities)
+            meanPeriodicityNew = sum(allPeriodicities)/nnz(allPeriodicities);
+        end
+        
+        %Plot periodicities as graph
         if str2double(config.waveletDenoising.periodicityCalculation.plotsEnable)
-            figure, plot(j, periodicityTemp, 'b')
+            figure, plot(j, allPeriodicities, 'b')
             title('Periodicity values denoised signal');
             xlabel('Iteration');
             ylabel('Periodicity value');
@@ -54,7 +89,7 @@ function [meanPeriodicity, locs, meanPeriodicityNew] = periodicityCalculation(si
                 legend(leg, 'Location', 'northeast');
             end
         end
-    else  
-        return;
+    else 
+        return
     end
 end

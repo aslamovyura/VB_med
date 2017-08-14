@@ -1,4 +1,5 @@
 function y = wthresh_our(x,sorh,t1, t2)
+%__________________________ Currently unused _____________________________%
 %WTHRESH Perform soft or hard thresholding. 
 %   Y = WTHRESH(X,SORH,T) returns soft (if SORH = 's')
 %   or hard (if SORH = 'h') T-thresholding  of the input 
