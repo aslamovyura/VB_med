@@ -13,7 +13,7 @@ try
     [file, config] = initializationMed();
         
 	%% ________________ Period Detection ____________________________ %%
-
+    segments = springerMethod(file);
     % Spectrum filtration 1 tones detection
 	peakLocations = [];
     parameters = [];
@@ -22,6 +22,7 @@ try
     parameters.plotEnable = config.config.parameters.evaluation.spectrumFiltration.Attributes.plotEnable;
     parameters.detailedPlotEnable = config.config.parameters.evaluation.spectrumFiltration.Attributes.detailedPlotEnable;
     parameters.printPlotEnable = config.config.parameters.evaluation.spectrumFiltration.Attributes.printPlotEnable;
+    [peakLocations] = spectrumFiltration(file, parameters);
     locs.spectrumFiltration.peakLocations = peakLocations;
     
     % Wavelet denoising periodicity detection
@@ -45,15 +46,6 @@ try
     %plot original signal with locs
     locs.waveletDenoising.denoisedPeaks = denoisedPeaks;
     locs.waveletDenoising.residualPeaks = residualPeaks;
-    
-
-	parameters = [];
-    parameters.minPeakHeight = config.config.parameters.evaluation.spectrumFiltration.Attributes.minPeakHeight;
-    parameters.timePeakDistance = config.config.parameters.evaluation.spectrumFiltration.Attributes.timePeakDistance;  
-    parameters.plotEnable = config.config.parameters.evaluation.spectrumFiltration.Attributes.plotEnable;
-    parameters.detailedPlotEnable = config.config.parameters.evaluation.spectrumFiltration.Attributes.detailedPlotEnable;
-    parameters.printPlotEnable = config.config.parameters.evaluation.spectrumFiltration.Attributes.printPlotEnable;
-	[peakLocations] = spectrumFiltration(file, parameters);
     
 
 
