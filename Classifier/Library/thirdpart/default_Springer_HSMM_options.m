@@ -26,8 +26,8 @@
 function springer_options = default_Springer_HSMM_options()
 
 %% The sampling frequency at which to extract signal features:
-springer_options.audio_Fs = 1000;
-% springer_options.audio_Fs = 4000;
+% springer_options.audio_Fs = 1000;
+springer_options.audio_Fs = 4000;
 
 
 %% The downsampled frequency

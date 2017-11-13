@@ -52,11 +52,22 @@ function [file,config] = initializationMed()
         signal = signal(:, 1);
     end
     
-    % Signal decimation for processing acceleration
-    if Fs > 1000    
-        decimateFactor = round(Fs/1000);
+    % upd on Nov. 13th, 2017 by I. Trus:
+    % decimation for signals with Fs > 4000 Hz
+    % cubic interpolation for signals with Fs < 4000 Hz
+    targetFs = 4000;
+    if Fs > targetFs 
+        decimateFactor = round(Fs/targetFs);
         signal = decimate(signal, decimateFactor);
-        Fs = 1000;
+        Fs = targetFs;
+    elseif Fs < targetFs    
+        len = length(signal);
+        dt = 1/Fs;
+        tmax = dt*len;
+        t = 0:dt:tmax-dt;
+        
+        signal = resample(signal, t, targetFs, targetFs, Fs, 'pchip');
+        Fs = targetFs;
     end
     
     %band-pass signal filtration 25-400Hz 4th order Butterworth 

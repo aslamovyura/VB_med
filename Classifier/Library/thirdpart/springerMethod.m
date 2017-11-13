@@ -17,7 +17,7 @@ springer_options = default_Springer_HSMM_options;
 %% Load the audio data and the annotations:
 % These are 6 example PCG recordings, downsampled to 1000 Hz, with
 % annotations of the R-peak and end-T-wave positions.
-load('example_data.mat');
+load('example_data.mat'); % resampled to 4000 Hz
 
 %% Split the data into train and test sets:
 % Select the first 5 recordings for training and the sixth for testing:
@@ -27,11 +27,11 @@ train_annotations = example_data.example_annotations([1:5],:);
 Fs = file.Fs;
 signal = file.signal;
 
-if Fs > 1000
-    decimationFactor = Fs/1000;
-    Fs = 1000;
-    signal = decimate(signal, decimationFactor);
-end
+% if Fs > 1000
+%     decimationFactor = Fs/1000;
+%     Fs = 1000;
+%     signal = decimate(signal, decimationFactor);
+% end
 
 test_recordings = {signal};
 test_annotations = example_data.example_annotations(6,:);
