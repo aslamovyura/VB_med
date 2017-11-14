@@ -93,9 +93,9 @@ for PCGi = 1:length(PCGCellArray)
     end
 end
 
-% Save the state observation values to the main workspace of Matlab for
-% later investigation if needed:
-assignin('base', 'state_observation_values', state_observation_values)
+% % Save the state observation values to the main workspace of Matlab for
+% % later investigation if needed:
+% assignin('base', 'state_observation_values', state_observation_values)
 
 %% Train the B and pi matrices after all the PCG recordings have been labelled:
 [logistic_regression_B_matrix, pi_vector, total_obs_distribution] = trainBandPiMatricesSpringer(state_observation_values);
