@@ -43,7 +43,7 @@ function [file,config] = initializationMed()
         error('There is no .wav files in the @In directory!');
     elseif wavFilesNumber > 1
         error('Too much .wav files in the @In directory!');
-    else
+    end
        
     [signal, Fs] = audioread(fileList{wavPositions,1});
 
